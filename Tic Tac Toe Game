@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tic Tac Toe Multiplayer</title>
+  <style>
+    body {
+      text-align: center;
+      padding: 50px;
+      font-family: Arial, sans-serif;
+    }
+
+    .board {
+      display: inline-block;
+    }
+
+    .board button {
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tic Tac Toe Multiplayer</h1>
+  <label for="player1Name">Player 1 Name:</label>
+  <input type="text" id="player1Name" value="Player 1">
+  <br>
+  <label for="player2Name">Player 2 Name:</label>
+  <input type="text" id="player2Name" value="Player 2">
+  <br><br>
+  <div class="board">
+    <button onclick="makeMove(0, 0)"></button>
+    <button onclick="makeMove(0, 1)"></button>
+    <button onclick="makeMove(0, 2)"></button>
+    <br>
+    <button onclick="makeMove(1, 0)"></button>
+    <button onclick="makeMove(1, 1)"></button>
+    <button onclick="makeMove(1, 2)"></button>
+    <br>
+    <button onclick="makeMove(2, 0)"></button>
+    <button onclick="makeMove(2, 1)"></button>
+    <button onclick="makeMove(2, 2)"></button>
+  </div>
+  <p id="message"></p>
+
+  <script>
+    const board = [
+      ["", "", ""],
+      ["", "", ""],
+      ["", "", ""]
+    ];
+    let currentPlayer = "X";
+    let gameOver = false;
+    const player1NameInput = document.getElementById("player1Name");
+    const player2NameInput = document.getElementById("player2Name");
+    let player1Name = player1NameInput.value;
+    let player2Name = player2NameInput.value;
+
+    function makeMove(row, col) {
+      if (board[row][col] === "" && !gameOver) {
+        board[row][col] = currentPlayer;
+        document.getElementsByTagName("button")[row * 3 + col].textContent = currentPlayer;
+        checkWin();
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+      }
+    }
+
+    function checkWin() {
+      const winningCombos = [
+        [[0, 0], [0, 1], [0, 2]],
+        [[1, 0], [1, 1], [1, 2]],
+        [[2, 0], [2, 1], [2, 2]],
+        [[0, 0], [1, 0], [2, 0]],
+        [[0, 1], [1, 1], [2, 1]],
+        [[0, 2], [1, 2], [2, 2]],
+        [[0, 0], [1, 1], [2, 2]],
+        [[0, 2], [1, 1], [2, 0]]
+      ];
+
+      for (let combo of winningCombos) {
+        const [a, b, c] = combo;
+        const [rowA, colA] = a;
+        const [rowB, colB] = b;
+        const [rowC, colC] = c;
+
+        if (
+          board[rowA][colA] !== "" &&
+          board[rowA][colA] === board[rowB][colB] &&
+          board[rowA][colA] === board[rowC][colC]
+        ) {
+          gameOver = true;
+          const winnerName = currentPlayer === "X" ? player1Name : player2Name;
+          document.getElementById("message").textContent = `${winnerName} wins!`;
+          break;
+        }
+      }
+
+      if (!gameOver && isBoardFull()) {
+        gameOver = true;
+        document.getElementById("message").textContent = "It's a tie!";
+      }
+    }
+
+    function isBoardFull() {
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+          if (board[row][col] === "") {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    function updatePlayerNames() {
+      player1Name = player1NameInput.value;
+      player2Name = player2NameInput.value;
+    }
+
+    player1NameInput.addEventListener("input", updatePlayerNames);
+    player2NameInput.addEventListener("input", updatePlayerNames);
+  </script>
+</body>
+</html>
